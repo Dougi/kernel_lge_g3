@@ -1875,7 +1875,10 @@ loadfw_err:
 static int qseecom_load_commonlib_image(struct qseecom_dev_handle *data)
 {
 	int ret = 0;
+<<<<<<< HEAD
 	int len = 0;
+=======
+>>>>>>> 69bf3c0... qseecom: Replace kzalloc with ion_alloc
 	uint32_t fw_size = 0;
 	struct qseecom_load_app_ireq load_req = {0, 0, 0, 0};
 	struct qseecom_command_scm_resp resp;
@@ -1888,14 +1891,22 @@ static int qseecom_load_commonlib_image(struct qseecom_dev_handle *data)
 	qseecom.cmnlib_ion_handle = ion_alloc(qseecom.ion_clnt, fw_size,
 					SZ_4K, ION_HEAP(ION_QSECOM_HEAP_ID), 0);
 	if (IS_ERR_OR_NULL(qseecom.cmnlib_ion_handle)) {
+<<<<<<< HEAD
 		pr_err("ION alloc failed\n");
+=======
+		pr_err("%s: ION alloc failed\n",  __func__);
+>>>>>>> 69bf3c0... qseecom: Replace kzalloc with ion_alloc
 		return -ENOMEM;
 	}
 
 	img_data = (u8 *)ion_map_kernel(qseecom.ion_clnt,
 					qseecom.cmnlib_ion_handle);
 	if (IS_ERR_OR_NULL(img_data)) {
+<<<<<<< HEAD
 		pr_err("ION memory mapping for cmnlib failed\n");
+=======
+		pr_err("%s: ION memory mapping for cmnlib failed\n", __func__);
+>>>>>>> 69bf3c0... qseecom: Replace kzalloc with ion_alloc
 		ret = -ENOMEM;
 		goto exit_ion_free;
 	}
@@ -1903,6 +1914,7 @@ static int qseecom_load_commonlib_image(struct qseecom_dev_handle *data)
 	if (ret) {
 		ret = -EIO;
 		goto exit_ion_unmap_kernel;
+<<<<<<< HEAD
 	}
 	/* Get the physical address of the ION BUF */
 	ret = ion_phys(qseecom.ion_clnt, qseecom.cmnlib_ion_handle,
@@ -1912,6 +1924,8 @@ static int qseecom_load_commonlib_image(struct qseecom_dev_handle *data)
 		pr_err("physical memory retrieval failure\n");
 		ret = -EIO;
 		goto exit_ion_unmap_kernel;
+=======
+>>>>>>> 69bf3c0... qseecom: Replace kzalloc with ion_alloc
 	}
 	/* Populate the remaining parameters */
 	load_req.qsee_cmd_id = QSEOS_LOAD_SERV_IMAGE_COMMAND;
@@ -1930,7 +1944,11 @@ static int qseecom_load_commonlib_image(struct qseecom_dev_handle *data)
 	ret = __qseecom_enable_clk_scale_up(data);
 	if (ret) {
 		ret = -EIO;
+<<<<<<< HEAD
 		goto exit_unregister_bus_bw_need;
+=======
+		goto exit_ion_unmap_kernel;
+>>>>>>> 69bf3c0... qseecom: Replace kzalloc with ion_alloc
 	}
 
 	__cpuc_flush_dcache_area((void *)img_data, fw_size);
@@ -1980,6 +1998,17 @@ exit_unregister_bus_bw_need:
 		qseecom_unregister_bus_bandwidth_needs(data);
 		mutex_unlock(&qsee_bw_mutex);
 	}
+
+exit_ion_unmap_kernel:
+	ion_unmap_kernel(qseecom.ion_clnt, qseecom.cmnlib_ion_handle);
+
+exit_ion_free:
+	ion_free(qseecom.ion_clnt, qseecom.cmnlib_ion_handle);
+	qseecom.cmnlib_ion_handle = NULL;
+	return ret;
+
+exit_disable_clk_vote:
+	__qseecom_disable_clk_scale_down(data);
 
 exit_ion_unmap_kernel:
 	ion_unmap_kernel(qseecom.ion_clnt, qseecom.cmnlib_ion_handle);
