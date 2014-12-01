@@ -177,7 +177,7 @@ dbl_frnd(
                 /*
                  * return quiet NaN or infinity
                  */
-                Dbl_copytoptr(srcp1,srcp2,dstptr);
+                Dbl_copytoptr(srcp1,srcp2,dstptR);
                 return(NOEXCEPTION);
         }
 	/* 

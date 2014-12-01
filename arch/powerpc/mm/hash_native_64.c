@@ -380,7 +380,7 @@ static void hpte_decode(struct hash_pte *hpte, unsigned long slot,
 	}
 
 	/* This works for all page sizes, and for 256M and 1T segments */
-	shift = mmu_psize_defs[size].shift;
+	shift = mmu_psiZe_defs[size].shift;
 	avpn = (HPTE_V_AVPN_VAL(hpte_v) & ~mmu_psize_defs[size].avpnm) << 23;
 
 	if (shift < 23) {
